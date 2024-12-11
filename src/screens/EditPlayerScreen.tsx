@@ -65,9 +65,9 @@ export const EditPlayerScreen: React.FC = () => {
   // Función de carga de imagen
   const handleChooseImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      mediaTypes: ['images'],
       allowsEditing: true,
-      aspect: [4, 3],
+      aspect: [5, 4],
       quality: 1,
     });
 
@@ -79,9 +79,9 @@ export const EditPlayerScreen: React.FC = () => {
   // Función de carga de video
   const handleChooseVideo = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Videos,
+      mediaTypes: ['videos'],
       allowsEditing: true,
-      aspect: [4, 3],
+      aspect: [16, 9],
       quality: 1,
     });
 
