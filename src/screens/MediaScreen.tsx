@@ -1,7 +1,6 @@
 import React, { useRef, useState } from 'react';
 import { View, Text, Button, StyleSheet } from 'react-native';
 import { useEvent } from 'expo';
-//import Video from 'react-native-video';
 import { useVideoPlayer, VideoView } from 'expo-video';
 // Navigation
 import { useRoute, RouteProp } from '@react-navigation/native';
@@ -24,13 +23,7 @@ export const MediaScreen: React.FC = () => {
     player.loop = true;
     player.play();
   });
-
-  const { isPlaying } = useEvent(player, 'playingChange', { isPlaying: player.playing });
-  // Hook de referencia al video
-  //const videoRef = useRef(null);
-  // Estado de reproducción del video
-  //const [isPlaying, setIsPlaying] = useState(false);
-
+ 
   return (
     <View style={globalStyles.mediaContainer}>
       <View style={globalStyles.videoContainer}>
@@ -39,18 +32,6 @@ export const MediaScreen: React.FC = () => {
           player={player}
           allowsFullscreen
           allowsPictureInPicture
-        />
-      </View>
-      <View style={globalStyles.controlsContainer}>
-        <Button
-          title={isPlaying ? 'Pause' : 'Play'}
-          onPress={() => {
-            if (isPlaying) {
-              player.pause();
-            } else {
-              player.play();
-            }
-          }}
         />
       </View>
     </View>

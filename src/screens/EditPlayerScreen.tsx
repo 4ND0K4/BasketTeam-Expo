@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { View, Button, TextInput, Alert, Text, ActivityIndicator } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
-//import * as ImagePicker from 'react-native-image-picker';
 import * as ImagePicker from 'expo-image-picker';
 // Navigation
 import { useNavigation, useRoute, type NavigationProp, RouteProp } from '@react-navigation/native';
@@ -90,22 +89,6 @@ export const EditPlayerScreen: React.FC = () => {
       setVideoFile(result.assets[0].uri);
     }
   };
-
-  {/*const handleChooseImage = () => {
-    ImagePicker.launchImageLibrary({ mediaType: 'photo' }, response => {
-      if (response.assets && response.assets.length > 0) {
-        setImageFile(response.assets[0]);
-      }
-    });
-  };
-
-  const handleChooseVideo = () => {
-    ImagePicker.launchImageLibrary({ mediaType: 'video' }, response => {
-      if (response.assets && response.assets.length > 0) {
-        setVideoFile(response.assets[0]);
-      }
-    });
-  };*/}
 
   const handleSubmit = async () => {
     if (!player) return;

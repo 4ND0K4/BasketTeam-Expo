@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Button, StyleSheet, TextInput, Alert, Text, ActivityIndicator } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 import * as ImagePicker from 'expo-image-picker';
@@ -13,11 +13,8 @@ import { Player } from '../models/Player';
 import { addPlayer } from '../services/playerService';
 
 const CreatePlayerScreen = () => {
-  // Hook de navegación
   const navigation = useNavigation<NavigationProp<RootStackParams>>();
-  // Estados
   const [loading, setLoading] = useState(false);
-
   const [name, setName] = useState('');
   const [position, setPosition] = useState('Base');
   const [num, setNum] = useState('');
@@ -27,35 +24,55 @@ const CreatePlayerScreen = () => {
   const [imageFile, setImageFile] = useState<string | null>(null);
   const [videoFile, setVideoFile] = useState<string | null>(null);
 
-  // Función de carga de imagen
+  useEffect(() => {
+    (async () => {
+      // Request permission to access the media library
+      const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+      if (status !== 'granted') {
+        // Alert the user if permission is not granted
+        alert('Sorry, we need camera roll permissions to make this work!');
+      }
+    })();
+  }, []);
+
   const handleChooseImage = async () => {
-    let result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ['images'],
-      allowsEditing: true,
-      aspect: [4, 3],
-      quality: 1,
-    });
+    try {
+      let result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ['images'],
+        allowsEditing: true,
+        aspect: [5, 4],
+        quality: 1,
+      });
 
-    if (!result.canceled && result.assets && result.assets[0]?.uri) {
-      setImageFile(result.assets[0].uri);
+      if (!result.canceled && result.assets && result.assets[0]?.uri) {
+        setImageFile(result.assets[0].uri);
+      } else {
+        console.error('No se seleccionó una imagen o la URI es inválida', result);
+      }
+    } catch (error) {
+      console.error('Error al seleccionar la imagen:', error);
     }
   };
 
-  // Función de carga de video
   const handleChooseVideo = async () => {
-    let result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ['videos'],
-      allowsEditing: true,
-      aspect: [4, 3],
-      quality: 1,
-    });
+    try {
+      let result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ['videos'],
+        allowsEditing: true,
+        aspect: [16, 9],
+        quality: 1,
+      });
 
-    if (!result.canceled && result.assets && result.assets[0]?.uri) {
-      setVideoFile(result.assets[0].uri);
+      if (!result.canceled && result.assets && result.assets[0]?.uri) {
+        setVideoFile(result.assets[0].uri);
+      } else {
+        console.error('No se seleccionó un video o la URI es inválida', result);
+      }
+    } catch (error) {
+      console.error('Error al seleccionar el video:', error);
     }
   };
 
-  // Función de envío de formulario
   const handleSubmit = async () => {
     if (parseInt(age) < 18 || parseInt(age) > 64) {
       Alert.alert('La edad debe estar entre 18 y 64 años');
@@ -81,7 +98,6 @@ const CreatePlayerScreen = () => {
     setLoading(true);
     try {
       await addPlayer(player, imageFile, videoFile);
-      // Reset form
       setName('');
       setPosition('Base');
       setNum('');

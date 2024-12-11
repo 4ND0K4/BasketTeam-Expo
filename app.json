@@ -43,7 +43,15 @@
           "backgroundColor": "#ffffff"
         }
       ],
-      "expo-video"
+      "expo-video",
+      [
+      "expo-image-picker",
+        {
+          "photosPermission": "The app accesses your photos to let you share them with your friends.",
+          "cameraPermission": "La aplicación necesita acceso a la cámara para tomar fotos o videos.",
+          "microphonePermission": "La aplicación necesita acceso al micrófono para grabar audio." 
+        }
+      ]
     ],
     "experiments": {
       "typedRoutes": true

@@ -1,7 +1,8 @@
-import { firestore, storage } from '../../firebaseConfig';
+import { firestore } from '../../firebaseConfig';
 import { Player } from '../models/Player';
-import { collection, doc, getDoc, getDocs, query, orderBy, startAfter, limit, updateDoc, deleteDoc, addDoc } from 'firebase/firestore';
-import { ref as storageRef, getDownloadURL, uploadBytesResumable } from 'firebase/storage';
+import { collection, doc, getDoc, getDocs, query, orderBy, startAfter, limit, updateDoc, deleteDoc, addDoc, FirestoreError } from 'firebase/firestore';
+import { getStorage, ref, getDownloadURL, uploadBytes } from 'firebase/storage';
+import uuid from 'react-native-uuid';
 
 const playersCollection = collection(firestore, 'players');
 
@@ -31,32 +32,53 @@ export const getPlayerById = async (id: string): Promise<Player | null> => {
 };
 
 // Función para subir archivos a Firebase Storage
-export const uploadFile = async (file: string, path: string): Promise<string> => {
-  const response = await fetch(file);
-  const blob = await response.blob();
-  const fileRef = storageRef(storage, path);
-  const uploadTask = uploadBytesResumable(fileRef, blob);
+export const uploadFile = async (uri: string): Promise<string> => {
+  try {
+    if (!uri) {
+      throw new Error("No se proporcionó una URI válida para el archivo");
+    }
 
-  return new Promise((resolve, reject) => {
-    uploadTask.on(
-      'state_changed',
-      null,
-      reject,
-      async () => {
-        try {
-          const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
-          resolve(downloadURL);
-        } catch (err) {
-          reject(err);
-        }
+    const response = await fetch(uri);
+    if (!response.ok) {
+      throw new Error(`Error al obtener el archivo: ${response.statusText}`);
+    }
+
+    const blob = await response.blob();
+    const storage = getStorage();
+    const uniqueFileName = `${uuid.v4()}-${uri.split('/').pop()}`;
+    const storageRef = ref(storage, `players/${uniqueFileName}`);
+
+    const snapshot = await uploadBytes(storageRef, blob);
+    console.log(snapshot.metadata);
+
+    const downloadURL = await getDownloadURL(snapshot.ref);
+    return downloadURL;
+  } catch (error) {
+    console.error('Error al subir el archivo:', error);
+    if (error instanceof Error) {
+      console.error('Error message:', error.message);
+      if (error instanceof FirestoreError) {
+        console.error('Firebase error code:', error.code);
+        console.error('Firebase error payload:', error);
       }
-    );
-  });
+    }
+    throw error;
+  }
 };
 
 // Función para agregar un jugador a Firestore
 export const addPlayer = async (player: Player, imageFile: string | null, videoFile: string | null) => {
   try {
+    if (imageFile) {
+      const imageUrl = await uploadFile(imageFile);
+      player.img = imageUrl;
+    }
+
+    if (videoFile) {
+      const videoUrl = await uploadFile(videoFile);
+      player.video = videoUrl;
+    }
+
     await addDoc(playersCollection, player);
   } catch (error) {
     console.error('Error al agregar el jugador:', error);
@@ -76,12 +98,12 @@ export const updatePlayer = async (
   videoFile?: any
 ): Promise<void> => {
   if (imageFile) {
-    const imageUrl = await uploadFile(imageFile, `images/${id}`);
+    const imageUrl = await uploadFile(imageFile);
     player.img = imageUrl;
   }
 
   if (videoFile) {
-    const videoUrl = await uploadFile(videoFile, `videos/${id}`);
+    const videoUrl = await uploadFile(videoFile);
     player.video = videoUrl;
   }
 
