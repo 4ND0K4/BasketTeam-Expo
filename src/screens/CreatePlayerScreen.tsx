@@ -7,7 +7,7 @@ import { useNavigation, type NavigationProp } from '@react-navigation/native';
 import { type RootStackParams } from '../routes/StackNavigator';
 // Styles
 import { globalStyles } from '../styles/theme/global.styles';
-import { FontAwesome } from '@expo/vector-icons';
+import { FontAwesome6 } from '@expo/vector-icons';
 // Models & Services
 import { Player } from '../models/Player';
 import { addPlayer } from '../services/playerService';
@@ -166,20 +166,20 @@ const CreatePlayerScreen = () => {
         <Picker.Item label="Pivot" value="Pivot" />
       </Picker>
       <View style={globalStyles.buttonContainer}>
-        <FontAwesome.Button 
+        <FontAwesome6.Button 
           name="image" 
           backgroundColor="#e65c00" 
           onPress={handleChooseImage}
         >
           Elige imagen
-        </FontAwesome.Button>
-        <FontAwesome.Button 
-          name="film" 
+        </FontAwesome6.Button>
+        <FontAwesome6.Button 
+          name="video" 
           backgroundColor="#e65c00" 
           onPress={handleChooseVideo}
         >
           Elige video
-        </FontAwesome.Button>
+        </FontAwesome6.Button>
       </View>
       <View style={globalStyles.formButtonSeparator} />
       {loading ? (
