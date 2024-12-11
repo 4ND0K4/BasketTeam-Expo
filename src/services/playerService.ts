@@ -79,7 +79,8 @@ export const addPlayer = async (player: Player, imageFile: string | null, videoF
       player.video = videoUrl;
     }
 
-    await addDoc(playersCollection, player);
+    const docRef = await addDoc(playersCollection, player);
+    await updateDoc(docRef, { id: docRef.id });
   } catch (error) {
     console.error('Error al agregar el jugador:', error);
     if (error instanceof Error) {

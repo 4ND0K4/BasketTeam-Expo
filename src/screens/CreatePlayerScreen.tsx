@@ -85,7 +85,7 @@ const CreatePlayerScreen = () => {
     }
 
     const player: Player = {
-      id: '',
+      id: Math.random().toString(36).substr(2, 9), // Generate a random id
       name,
       position,
       num: parseInt(num),
