@@ -210,6 +210,19 @@ export const globalStyles = StyleSheet.create({
         height: '100%',
       },
       controlsContainer: {
+        flexDirection: 'row',
+        justifyContent: 'space-around',
+        width: '100%',
         padding: 10,
-      }
+      },
+      controlButton: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        padding: 10,
+      },
+      controlText: {
+        marginLeft: 5,
+        marginRight: 5,
+        fontSize: 16,
+      },  
 });
